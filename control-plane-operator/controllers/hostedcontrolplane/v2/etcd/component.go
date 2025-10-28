@@ -37,6 +37,7 @@ func NewComponent() component.ControlPlaneComponent {
 		WithManifestAdapter(
 			"servicemonitor.yaml",
 			component.WithAdaptFunction(adaptServiceMonitor),
+			component.DisableIfAnnotationExist(hyperv1.DisableMonitoringServices),
 		).
 		WithManifestAdapter(
 			"pdb.yaml",
