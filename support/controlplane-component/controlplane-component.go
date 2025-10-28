@@ -256,6 +256,16 @@ func (c *controlPlaneWorkload[T]) update(cpContext ControlPlaneContext) error {
 			return adapter.reconcile(cpContext, obj)
 		}
 
+		// Skip Prometheus Operator resources if no adapter is registered for them
+		// (this means monitoring was conditionally disabled for this component)
+		gvk := obj.GetObjectKind().GroupVersionKind()
+		if gvk.Group == "monitoring.coreos.com" && gvk.Version == "v1" {
+			if gvk.Kind == "PodMonitor" || gvk.Kind == "ServiceMonitor" || gvk.Kind == "PrometheusRule" {
+				// No adapter registered = monitoring disabled, skip this resource
+				return nil
+			}
+		}
+
 		if _, err := cpContext.ApplyManifest(cpContext, cpContext.Client, obj); err != nil {
 			return err
 		}

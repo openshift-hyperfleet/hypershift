@@ -730,8 +730,8 @@ func isAWSPlatformEnabled(platformsToInstall []string) bool {
 // This includes:
 // - Role for Prometheus
 // - RoleBinding for Prometheus
-// - ServiceMonitor for HyperShift
-// - RecordingRule for HyperShift
+// - ServiceMonitor for HyperShift (only if platform monitoring is enabled)
+// - RecordingRule for HyperShift (only if platform monitoring is enabled)
 // - AlertingRule for HyperShift (if SLOsAlerts is enabled)
 // - MonitoringDashboardTemplate for HC monitoring dashboards (if MonitoringDashboards is enabled)
 func setupMonitoring(opts Options, operatorNamespace *corev1.Namespace) []crclient.Object {
@@ -749,15 +749,19 @@ func setupMonitoring(opts Options, operatorNamespace *corev1.Namespace) []crclie
 	}.Build()
 	objects = append(objects, prometheusRoleBinding)
 
-	serviceMonitor := assets.HyperShiftServiceMonitor{
-		Namespace: operatorNamespace,
-	}.Build()
-	objects = append(objects, serviceMonitor)
+	// Only create ServiceMonitor and PrometheusRule if platform monitoring is enabled
+	// This allows deployment on vanilla Kubernetes without Prometheus Operator
+	if opts.PlatformMonitoring != metrics.PlatformMonitoringNone {
+		serviceMonitor := assets.HyperShiftServiceMonitor{
+			Namespace: operatorNamespace,
+		}.Build()
+		objects = append(objects, serviceMonitor)
 
-	recordingRule := assets.HypershiftRecordingRule{
-		Namespace: operatorNamespace,
-	}.Build()
-	objects = append(objects, recordingRule)
+		recordingRule := assets.HypershiftRecordingRule{
+			Namespace: operatorNamespace,
+		}.Build()
+		objects = append(objects, recordingRule)
+	}
 
 	if opts.SLOsAlerts {
 		alertingRule := assets.HypershiftAlertingRule{

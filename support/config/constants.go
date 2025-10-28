@@ -45,6 +45,7 @@ const (
 
 	DefaultIngressDomainEnvVar                    = "DEFAULT_INGRESS_DOMAIN"
 	EnableCVOManagementClusterMetricsAccessEnvVar = "ENABLE_CVO_MANAGEMENT_CLUSTER_METRICS_ACCESS"
+	EnableOCPClusterMonitoringEnvVar              = "ENABLE_OCP_CLUSTER_MONITORING"
 
 	EnableEtcdRecoveryEnvVar = "ENABLE_ETCD_RECOVERY"
 

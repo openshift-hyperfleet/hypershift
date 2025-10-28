@@ -99,10 +99,12 @@ func NewComponent() component.ControlPlaneComponent {
 		WithManifestAdapter(
 			"servicemonitor.yaml",
 			component.WithAdaptFunction(adaptServiceMonitor),
+			component.DisableIfAnnotationExist(hyperv1.DisableMonitoringServices),
 		).
 		WithManifestAdapter(
 			"prometheus-recording-rules.yaml",
 			component.WithAdaptFunction(adaptRecordingRules),
+			component.DisableIfAnnotationExist(hyperv1.DisableMonitoringServices),
 		).
 		WithManifestAdapter(
 			"aws-pod-identity-webhook-kubeconfig.yaml",

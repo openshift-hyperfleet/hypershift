@@ -27,7 +27,8 @@ type ControlPlaneOperatorOptions struct {
 	OpenShiftRegistryOverrides  string
 	DefaultIngressDomain        string
 
-	FeatureSet configv1.FeatureSet
+	FeatureSet                 configv1.FeatureSet
+	EnableOCPClusterMonitoring bool
 }
 
 // IsRequestServing implements controlplanecomponent.ComponentOptions.
@@ -46,16 +47,22 @@ func (c *ControlPlaneOperatorOptions) NeedsManagementKASAccess() bool {
 }
 
 func NewComponent(options *ControlPlaneOperatorOptions) component.ControlPlaneComponent {
-	return component.NewDeploymentComponent(ComponentName, options).
+	comp := component.NewDeploymentComponent(ComponentName, options).
 		WithAdaptFunction(options.adaptDeployment).
 		WithManifestAdapter(
 			"role.yaml",
 			component.WithAdaptFunction(adaptRole),
-		).
-		WithManifestAdapter(
+		)
+
+	// Only add PodMonitor if platform monitoring is enabled
+	if options.EnableOCPClusterMonitoring {
+		comp = comp.WithManifestAdapter(
 			"podmonitor.yaml",
 			component.WithAdaptFunction(options.adaptPodMonitor),
-		).
+		)
+	}
+
+	return comp.
 		WithManifestAdapter(
 			"rolebinding.yaml",
 			component.SetHostedClusterAnnotation(),

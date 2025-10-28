@@ -242,7 +242,6 @@ func (r *HostedClusterReconciler) managedResources() []client.Object {
 	managedResources := []client.Object{
 		&hyperv1.HostedControlPlane{},
 		&appsv1.Deployment{},
-		&prometheusoperatorv1.PodMonitor{},
 		&networkingv1.NetworkPolicy{},
 		&rbacv1.ClusterRole{},
 		&rbacv1.ClusterRoleBinding{},
@@ -255,6 +254,11 @@ func (r *HostedClusterReconciler) managedResources() []client.Object {
 		&corev1.Service{},
 		&corev1.Endpoints{},
 		&hyperv1.NodePool{},
+	}
+
+	// Only watch PodMonitor resources if platform monitoring is enabled
+	if r.EnableOCPClusterMonitoring {
+		managedResources = append(managedResources, &prometheusoperatorv1.PodMonitor{})
 	}
 
 	// Watch based on platforms installed
@@ -2193,6 +2197,7 @@ func reconcileHostedControlPlaneAnnotations(hcp *hyperv1.HostedControlPlane, hcl
 	// These annotations are copied from the HostedCluster
 	mirroredAnnotations := []string{
 		hyperv1.DisablePKIReconciliationAnnotation,
+		hyperv1.DisableMonitoringServices,
 		hyperv1.OauthLoginURLOverrideAnnotation,
 		hyperv1.KonnectivityAgentImageAnnotation,
 		hyperv1.KonnectivityServerImageAnnotation,
@@ -2532,6 +2537,7 @@ func (r *HostedClusterReconciler) reconcileControlPlaneOperator(cpContext contro
 		OpenShiftRegistryOverrides:  hyperutil.ConvertOpenShiftImageRegistryOverridesToCommandLineFlag(releaseProvider.GetOpenShiftImageRegistryOverrides()),
 		DefaultIngressDomain:        defaultIngressDomain,
 		FeatureSet:                  r.FeatureSet,
+		EnableOCPClusterMonitoring:  r.EnableOCPClusterMonitoring,
 	})
 
 	if err := cpo.Reconcile(cpContext); err != nil {
