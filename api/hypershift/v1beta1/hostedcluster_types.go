@@ -1161,6 +1161,9 @@ const (
 
 	// GCPPlatform represents Google Cloud Platform infrastructure.
 	GCPPlatform PlatformType = "GCP"
+
+	// OCIPlatform represents Oracle Cloud Infrastructure.
+	OCIPlatform PlatformType = "OCI"
 )
 
 // List all PlatformType instances
@@ -1175,6 +1178,7 @@ func PlatformTypes() []PlatformType {
 		PowerVSPlatform,
 		OpenStackPlatform,
 		GCPPlatform,
+		OCIPlatform,
 	}
 }
 
@@ -1187,7 +1191,7 @@ type PlatformSpec struct {
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf", message="Type is immutable"
 	// +immutable
 	// +openshift:validation:FeatureGateAwareEnum:featureGate="",enum=AWS;Azure;IBMCloud;KubeVirt;Agent;PowerVS;None
-	// +openshift:validation:FeatureGateAwareEnum:featureGate=OpenStack;GCPPlatform,enum=AWS;Azure;IBMCloud;KubeVirt;Agent;PowerVS;None;OpenStack;GCP
+	// +openshift:validation:FeatureGateAwareEnum:featureGate=OpenStack;GCPPlatform;OCIPlatform,enum=AWS;Azure;IBMCloud;KubeVirt;Agent;PowerVS;None;OpenStack;GCP;OCI
 	// +required
 	Type PlatformType `json:"type"`
 
@@ -1235,6 +1239,13 @@ type PlatformSpec struct {
 	// +immutable
 	// +openshift:enable:FeatureGate=GCPPlatform
 	GCP *GCPPlatformSpec `json:"gcp,omitempty"`
+
+	// oci specifies configuration for clusters running on Oracle Cloud Infrastructure.
+	//
+	// +optional
+	// +immutable
+	// +openshift:enable:FeatureGate=OCIPlatform
+	OCI *OCIPlatformSpec `json:"oci,omitempty"`
 }
 
 // IBMCloudPlatformSpec defines IBMCloud specific settings for components
