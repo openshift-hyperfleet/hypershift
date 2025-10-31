@@ -1538,9 +1538,26 @@ func (o HyperShiftServiceMonitor) Build() *prometheusoperatorv1.ServiceMonitor {
 
 type HypershiftRecordingRule struct {
 	Namespace *corev1.Namespace
+	Scope     string // "operator", "controlplane", or "" for all
 }
 
 func (r HypershiftRecordingRule) Build() *prometheusoperatorv1.PrometheusRule {
+	var name string
+	var spec prometheusoperatorv1.PrometheusRuleSpec
+
+	switch r.Scope {
+	case "operator":
+		name = "metrics-operator"
+		spec = prometheusRuleSpecFromFile("operator.yaml")
+	case "controlplane":
+		name = "metrics-controlplane"
+		spec = prometheusRuleSpecFromFile("controlplane.yaml")
+	default:
+		// For backward compatibility, load all rules
+		name = "metrics"
+		spec = prometheusRuleSpec()
+	}
+
 	rule := &prometheusoperatorv1.PrometheusRule{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PrometheusRule",
@@ -1548,11 +1565,11 @@ func (r HypershiftRecordingRule) Build() *prometheusoperatorv1.PrometheusRule {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: r.Namespace.Name,
-			Name:      "metrics",
+			Name:      name,
 		},
 	}
 
-	rule.Spec = prometheusRuleSpec()
+	rule.Spec = spec
 	return rule
 }
 

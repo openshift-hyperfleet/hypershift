@@ -1,5 +1,5 @@
 groups:
-- name: hypershift.rules
+- name: hypershift.controlplane.rules
   interval: "30s"
   rules:
   - record: hypershift:apiserver_request_total:read
@@ -72,21 +72,3 @@ groups:
           * on (pod, namespace) group_left(app)
             label_replace(kube_pod_labels{label_hypershift_openshift_io_control_plane_component!=""}, "app", "$1", "label_app", "(.*)")
           )
-
-  - record: hypershift:operator:component_api_requests_total
-    expr: sum by (app, namespace, code, method) (
-            sum(rest_client_requests_total) by (pod, namespace, code, method)
-          * on (pod, namespace) group_left(app)
-            label_replace(kube_pod_labels{label_hypershift_openshift_io_operator_component!=""}, "app", "$1", "label_app", "(.*)")
-          )
-  - record: platform:hypershift_hostedclusters:max
-    expr: max by(platform) (hypershift_hostedclusters)
-    
-  - record: platform:hypershift_nodepools:max
-    expr: max by(platform) (hypershift_nodepools)
-
-  - record: cluster_name:hypershift_nodepools_size:sum
-    expr: sum by(cluster_name, exported_namespace) (max by(name, exported_namespace, platform, cluster_name) (hypershift_nodepools_size))
-
-  - record: cluster_name:hypershift_nodepools_available_replicas:sum
-    expr: sum by(cluster_name, exported_namespace) (max by(name, exported_namespace, platform, cluster_name) (hypershift_nodepools_available_replicas))

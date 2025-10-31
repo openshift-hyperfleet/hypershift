@@ -135,7 +135,8 @@ func prometheusRuleSpec() prometheusoperatorv1.PrometheusRuleSpec {
 		if filepath.Ext(path) != ".yaml" {
 			return nil
 		}
-		spec = getPrometheusRuleSpec(recordingRules, path)
+		ruleSpec := getPrometheusRuleSpec(recordingRules, path)
+		spec.Groups = append(spec.Groups, ruleSpec.Groups...)
 		return nil
 	})
 	if err != nil {
@@ -143,6 +144,11 @@ func prometheusRuleSpec() prometheusoperatorv1.PrometheusRuleSpec {
 	}
 
 	return spec
+}
+
+// prometheusRuleSpecFromFile returns a PrometheusRuleSpec loaded from a specific file
+func prometheusRuleSpecFromFile(filename string) prometheusoperatorv1.PrometheusRuleSpec {
+	return getPrometheusRuleSpec(recordingRules, "recordingrules/"+filename)
 }
 
 // getPrometheusRuleSpec unmarshals a prometheusoperatorv1.PrometheusRuleSpec from file.

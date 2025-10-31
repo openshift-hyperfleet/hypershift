@@ -757,10 +757,21 @@ func setupMonitoring(opts Options, operatorNamespace *corev1.Namespace) []crclie
 		}.Build()
 		objects = append(objects, serviceMonitor)
 
-		recordingRule := assets.HypershiftRecordingRule{
+		// Create operator recording rules (for both OperatorOnly and All)
+		operatorRecordingRule := assets.HypershiftRecordingRule{
 			Namespace: operatorNamespace,
+			Scope:     "operator",
 		}.Build()
-		objects = append(objects, recordingRule)
+		objects = append(objects, operatorRecordingRule)
+
+		// Create control plane recording rules only when monitoring All
+		if opts.PlatformMonitoring == metrics.PlatformMonitoringAll {
+			controlPlaneRecordingRule := assets.HypershiftRecordingRule{
+				Namespace: operatorNamespace,
+				Scope:     "controlplane",
+			}.Build()
+			objects = append(objects, controlPlaneRecordingRule)
+		}
 	}
 
 	if opts.SLOsAlerts {
