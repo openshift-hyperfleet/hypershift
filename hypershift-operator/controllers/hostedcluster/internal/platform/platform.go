@@ -12,6 +12,7 @@ import (
 	"github.com/openshift/hypershift/hypershift-operator/controllers/hostedcluster/internal/platform/ibmcloud"
 	"github.com/openshift/hypershift/hypershift-operator/controllers/hostedcluster/internal/platform/kubevirt"
 	"github.com/openshift/hypershift/hypershift-operator/controllers/hostedcluster/internal/platform/none"
+	"github.com/openshift/hypershift/hypershift-operator/controllers/hostedcluster/internal/platform/oci"
 	"github.com/openshift/hypershift/hypershift-operator/controllers/hostedcluster/internal/platform/openstack"
 	"github.com/openshift/hypershift/hypershift-operator/controllers/hostedcluster/internal/platform/powervs"
 	"github.com/openshift/hypershift/support/releaseinfo"
@@ -40,7 +41,12 @@ var _ Platform = ibmcloud.IBMCloud{}
 var _ Platform = none.None{}
 var _ Platform = agent.Agent{}
 var _ Platform = kubevirt.Kubevirt{}
+<<<<<<< HEAD
 var _ Platform = gcp.GCP{}
+||||||| parent of 1477f1865 (feat(platform): add minimal OCI platform controller implementation)
+=======
+var _ Platform = oci.OCI{}
+>>>>>>> 1477f1865 (feat(platform): add minimal OCI platform controller implementation)
 
 type Platform interface {
 	// ReconcileCAPIInfraCR is called during HostedCluster reconciliation prior to reconciling the CAPI Cluster CR.
@@ -156,6 +162,11 @@ func GetPlatform(ctx context.Context, hcluster *hyperv1.HostedCluster, releasePr
 		platform = openstack.New(capiImageProvider, orcImage, payloadVersion)
 	case hyperv1.GCPPlatform:
 		platform = gcp.New()
+	case hyperv1.OCIPlatform:
+		// Minimal OCI platform support - no CAPI provider yet
+		// TODO: Add OCI CAPI provider image retrieval when available:
+		//   capiImageProvider, err = imgUtil.GetPayloadImage(ctx, releaseProvider, hcluster, OCICAPIProvider, pullSecretBytes)
+		platform = &oci.OCI{}
 	default:
 		return nil, fmt.Errorf("unsupported platform: %s", hcluster.Spec.Platform.Type)
 	}
