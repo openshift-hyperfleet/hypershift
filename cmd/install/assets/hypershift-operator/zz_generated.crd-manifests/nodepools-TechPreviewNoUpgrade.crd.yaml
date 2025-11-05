@@ -1208,6 +1208,52 @@ spec:
                     required:
                     - rootVolume
                     type: object
+                  oci:
+                    description: oci specifies the configuration used when using OCI
+                      platform.
+                    properties:
+                      bootVolumeSize:
+                        default: 100
+                        description: |-
+                          bootVolumeSize is the size of the boot volume in gigabytes.
+                          Default: 100GB
+                        format: int32
+                        maximum: 32768
+                        minimum: 50
+                        type: integer
+                      imageId:
+                        description: |-
+                          imageID is the OCID of the OS image to use for worker nodes.
+                          If not specified, the image will be auto-discovered from the release payload.
+                          A valid image OCID must satisfy the following rules:
+                            format: Must be in the form `ocid1.image.oc1.<region>.<unique_ID>`
+                            characters: Only lowercase letters (a-z), digits (0-9), and periods (.) are allowed
+                        pattern: ^ocid1\.image\.oc1\.[a-z0-9.-]+\.[a-z0-9]+$
+                        type: string
+                      shape:
+                        description: |-
+                          shape is the OCI compute shape (instance type) for worker nodes.
+                          Examples: "VM.Standard.E4.Flex", "VM.Standard3.Flex", "BM.Standard.E4.128"
+                          See: https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm
+                        minLength: 1
+                        type: string
+                      sshPublicKey:
+                        description: |-
+                          sshPublicKey is the SSH public key to inject into worker nodes.
+                          If not specified, nodes will not have SSH access.
+                        type: string
+                      subnetId:
+                        description: |-
+                          subnetID is the OCID of the subnet where worker nodes will be provisioned.
+                          A valid subnet OCID must satisfy the following rules:
+                            format: Must be in the form `ocid1.subnet.oc1.<region>.<unique_ID>`
+                            characters: Only lowercase letters (a-z), digits (0-9), and periods (.) are allowed
+                        pattern: ^ocid1\.subnet\.oc1\.[a-z0-9.-]+\.[a-z0-9]+$
+                        type: string
+                    required:
+                    - shape
+                    - subnetId
+                    type: object
                   openstack:
                     description: openstack specifies the configuration used when using
                       OpenStack platform.
@@ -1506,11 +1552,13 @@ spec:
                     enum:
                     - AWS
                     - Azure
+                    - GCP
                     - IBMCloud
                     - KubeVirt
                     - Agent
                     - PowerVS
                     - None
+                    - OCI
                     - OpenStack
                     maxLength: 100
                     type: string

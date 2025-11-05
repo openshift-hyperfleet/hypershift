@@ -469,6 +469,7 @@ type NodePoolPlatform struct {
 	// +immutable
 	// +openshift:validation:FeatureGateAwareEnum:featureGate="",enum=AWS;Azure;IBMCloud;KubeVirt;Agent;PowerVS;None
 	// +openshift:validation:FeatureGateAwareEnum:featureGate=OpenStack,enum=AWS;Azure;IBMCloud;KubeVirt;Agent;PowerVS;None;OpenStack
+	// +openshift:validation:FeatureGateAwareEnum:featureGate=OCIPlatform,enum=AWS;Azure;IBMCloud;KubeVirt;Agent;PowerVS;None;OpenStack;OCI
 	// +required
 	Type PlatformType `json:"type"`
 
@@ -506,6 +507,11 @@ type NodePoolPlatform struct {
 	// +optional
 	// +openshift:enable:FeatureGate=OpenStack
 	OpenStack *OpenStackNodePoolPlatform `json:"openstack,omitempty"`
+
+	// oci specifies the configuration used when using OCI platform.
+	// +optional
+	// +openshift:enable:FeatureGate=OCIPlatform
+	OCI *OCINodePoolPlatform `json:"oci,omitempty"`
 }
 
 // We define our own condition type since metav1.Condition has validation

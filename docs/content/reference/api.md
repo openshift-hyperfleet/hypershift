@@ -10045,6 +10045,20 @@ OpenStackNodePoolPlatform
 <p>openstack specifies the configuration used when using OpenStack platform.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>oci</code></br>
+<em>
+<a href="#hypershift.openshift.io/v1beta1.OCINodePoolPlatform">
+OCINodePoolPlatform
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>oci specifies the configuration used when using OCI platform.</p>
+</td>
+</tr>
 </tbody>
 </table>
 ###NodePoolPlatformStatus { #hypershift.openshift.io/v1beta1.NodePoolPlatformStatus }
@@ -10439,6 +10453,93 @@ int32
 <em>(Optional)</em>
 <p>port is the port of the NodePort service. If &lt;=0, the port is dynamically
 assigned when the service is created.</p>
+</td>
+</tr>
+</tbody>
+</table>
+###OCINodePoolPlatform { #hypershift.openshift.io/v1beta1.OCINodePoolPlatform }
+<p>
+(<em>Appears on:</em>
+<a href="#hypershift.openshift.io/v1beta1.NodePoolPlatform">NodePoolPlatform</a>)
+</p>
+<p>
+<p>OCINodePoolPlatform specifies the configuration for a NodePool on Oracle Cloud Infrastructure.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>shape</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>shape is the OCI compute shape (instance type) for worker nodes.
+Examples: &ldquo;VM.Standard.E4.Flex&rdquo;, &ldquo;VM.Standard3.Flex&rdquo;, &ldquo;BM.Standard.E4.128&rdquo;
+See: <a href="https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm">https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>imageId</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>imageID is the OCID of the OS image to use for worker nodes.
+If not specified, the image will be auto-discovered from the release payload.
+A valid image OCID must satisfy the following rules:
+format: Must be in the form <code>ocid1.image.oc1.&lt;region&gt;.&lt;unique_ID&gt;</code>
+characters: Only lowercase letters (a-z), digits (0-9), and periods (.) are allowed</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>subnetId</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>subnetID is the OCID of the subnet where worker nodes will be provisioned.
+A valid subnet OCID must satisfy the following rules:
+format: Must be in the form <code>ocid1.subnet.oc1.&lt;region&gt;.&lt;unique_ID&gt;</code>
+characters: Only lowercase letters (a-z), digits (0-9), and periods (.) are allowed</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>bootVolumeSize</code></br>
+<em>
+int32
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>bootVolumeSize is the size of the boot volume in gigabytes.
+Default: 100GB</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>sshPublicKey</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>sshPublicKey is the SSH public key to inject into worker nodes.
+If not specified, nodes will not have SSH access.</p>
 </td>
 </tr>
 </tbody>

@@ -30,3 +30,48 @@ type OCIPlatformSpec struct {
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="Region is immutable"
 	Region string `json:"region"`
 }
+
+// OCINodePoolPlatform specifies the configuration for a NodePool on Oracle Cloud Infrastructure.
+type OCINodePoolPlatform struct {
+	// shape is the OCI compute shape (instance type) for worker nodes.
+	// Examples: "VM.Standard.E4.Flex", "VM.Standard3.Flex", "BM.Standard.E4.128"
+	// See: https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm
+	//
+	// +required
+	// +kubebuilder:validation:MinLength=1
+	Shape string `json:"shape"`
+
+	// imageID is the OCID of the OS image to use for worker nodes.
+	// If not specified, the image will be auto-discovered from the release payload.
+	// A valid image OCID must satisfy the following rules:
+	//   format: Must be in the form `ocid1.image.oc1.<region>.<unique_ID>`
+	//   characters: Only lowercase letters (a-z), digits (0-9), and periods (.) are allowed
+	//
+	// +optional
+	// +kubebuilder:validation:Pattern=`^ocid1\.image\.oc1\.[a-z0-9.-]+\.[a-z0-9]+$`
+	ImageID string `json:"imageId,omitempty"`
+
+	// subnetID is the OCID of the subnet where worker nodes will be provisioned.
+	// A valid subnet OCID must satisfy the following rules:
+	//   format: Must be in the form `ocid1.subnet.oc1.<region>.<unique_ID>`
+	//   characters: Only lowercase letters (a-z), digits (0-9), and periods (.) are allowed
+	//
+	// +required
+	// +kubebuilder:validation:Pattern=`^ocid1\.subnet\.oc1\.[a-z0-9.-]+\.[a-z0-9]+$`
+	SubnetID string `json:"subnetId"`
+
+	// bootVolumeSize is the size of the boot volume in gigabytes.
+	// Default: 100GB
+	//
+	// +optional
+	// +kubebuilder:validation:Minimum=50
+	// +kubebuilder:validation:Maximum=32768
+	// +kubebuilder:default=100
+	BootVolumeSize *int32 `json:"bootVolumeSize,omitempty"`
+
+	// sshPublicKey is the SSH public key to inject into worker nodes.
+	// If not specified, nodes will not have SSH access.
+	//
+	// +optional
+	SSHPublicKey string `json:"sshPublicKey,omitempty"`
+}

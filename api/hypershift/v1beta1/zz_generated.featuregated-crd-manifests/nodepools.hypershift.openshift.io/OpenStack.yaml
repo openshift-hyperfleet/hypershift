@@ -1503,11 +1503,13 @@ spec:
                     enum:
                     - AWS
                     - Azure
+                    - GCP
                     - IBMCloud
                     - KubeVirt
                     - Agent
                     - PowerVS
                     - None
+                    - OCI
                     - OpenStack
                     maxLength: 100
                     type: string
