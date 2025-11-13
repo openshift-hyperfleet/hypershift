@@ -5262,13 +5262,14 @@ spec:
                     properties:
                       compartmentId:
                         description: |-
-                          compartmentID is the OCI compartment OCID where the cluster resides.
+                          compartmentId is the OCI compartment OCID where the cluster resides.
                           A valid compartment OCID must satisfy the following rules:
                             format: Must be in the form `ocid1.compartment.oc1..<unique_ID>`
                             characters: Only lowercase letters (`a-z`), digits (`0-9`), and periods (`.`) are allowed
                             start: Must begin with `ocid1.compartment.oc1..`
                             valid examples: "ocid1.compartment.oc1..aaaaaaaazgovbe2qxduadk3bmj5dobvoe5wnengzavax5pwsfr3bqbdrrcqa".
                           For more information about compartment OCIDs, see: https://docs.oracle.com/en-us/iaas/Content/General/Concepts/identifiers.htm.
+                        maxLength: 255
                         pattern: ^ocid1\.compartment\.oc1\.\.[a-z0-9]+$
                         type: string
                         x-kubernetes-validations:
@@ -5303,6 +5304,7 @@ spec:
                             valid examples: "us-ashburn-1", "us-phoenix-1", "eu-frankfurt-1", "ap-tokyo-1"
                             region identifiers are specific to Oracle Cloud Infrastructure.
                           For a full list of valid regions, see: https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm.
+                        maxLength: 100
                         pattern: ^[a-z]+-[a-z]+-[0-9]+$
                         type: string
                         x-kubernetes-validations:

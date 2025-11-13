@@ -163,10 +163,10 @@ func GetPlatform(ctx context.Context, hcluster *hyperv1.HostedCluster, releasePr
 	case hyperv1.GCPPlatform:
 		platform = gcp.New()
 	case hyperv1.OCIPlatform:
-		// Minimal OCI platform support - no CAPI provider yet
-		// TODO: Add OCI CAPI provider image retrieval when available:
-		//   capiImageProvider, err = imgUtil.GetPayloadImage(ctx, releaseProvider, hcluster, OCICAPIProvider, pullSecretBytes)
-		platform = &oci.OCI{}
+		// OCI platform support with CAPI provider deployment
+		// TODO: Add OCI CAPI provider image to release payload when available
+		// For now, users can override via annotation: hypershift.openshift.io/capi-provider-oci-image
+		platform = oci.New(capiImageProvider)
 	default:
 		return nil, fmt.Errorf("unsupported platform: %s", hcluster.Spec.Platform.Type)
 	}
