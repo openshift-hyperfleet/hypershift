@@ -2,7 +2,16 @@ package v1beta1
 
 // OCIPlatformSpec specifies configuration for clusters running on Oracle Cloud Infrastructure.
 type OCIPlatformSpec struct {
-	// compartmentID is the OCI compartment OCID where the cluster resides.
+	// identityRef is a reference to a secret holding OCI credentials
+	// to be used when reconciling the hosted cluster.
+	// The secret must contain two keys:
+	//   - "config": OCI configuration file content (typically ~/.oci/config format)
+	//   - "key": OCI API signing key (PEM-encoded private key)
+	//
+	// +required
+	IdentityRef OCIIdentityReference `json:"identityRef"`
+
+	// compartmentId is the OCI compartment OCID where the cluster resides.
 	// A valid compartment OCID must satisfy the following rules:
 	//   format: Must be in the form `ocid1.compartment.oc1..<unique_ID>`
 	//   characters: Only lowercase letters (`a-z`), digits (`0-9`), and periods (`.`) are allowed
@@ -12,6 +21,7 @@ type OCIPlatformSpec struct {
 	//
 	// +required
 	// +immutable
+	// +kubebuilder:validation:MaxLength=255
 	// +kubebuilder:validation:Pattern=`^ocid1\.compartment\.oc1\.\.[a-z0-9]+$`
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="CompartmentID is immutable"
 	CompartmentID string `json:"compartmentId"`
@@ -26,9 +36,23 @@ type OCIPlatformSpec struct {
 	//
 	// +required
 	// +immutable
+	// +kubebuilder:validation:MaxLength=100
 	// +kubebuilder:validation:Pattern=`^[a-z]+-[a-z]+-[0-9]+$`
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="Region is immutable"
 	Region string `json:"region"`
+}
+
+// OCIIdentityReference is a reference to a secret containing OCI credentials.
+type OCIIdentityReference struct {
+	// name is the name of a secret in the same namespace as the HostedCluster.
+	// The secret must contain the following keys:
+	//   - "config": OCI configuration file content
+	//   - "key": OCI API signing key (PEM format)
+	//
+	// +required
+	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:MaxLength=253
+	Name string `json:"name"`
 }
 
 // OCINodePoolPlatform specifies the configuration for a NodePool on Oracle Cloud Infrastructure.
@@ -39,24 +63,27 @@ type OCINodePoolPlatform struct {
 	//
 	// +required
 	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:MaxLength=255
 	Shape string `json:"shape"`
 
-	// imageID is the OCID of the OS image to use for worker nodes.
+	// imageId is the OCID of the OS image to use for worker nodes.
 	// If not specified, the image will be auto-discovered from the release payload.
 	// A valid image OCID must satisfy the following rules:
 	//   format: Must be in the form `ocid1.image.oc1.<region>.<unique_ID>`
 	//   characters: Only lowercase letters (a-z), digits (0-9), and periods (.) are allowed
 	//
 	// +optional
+	// +kubebuilder:validation:MaxLength=255
 	// +kubebuilder:validation:Pattern=`^ocid1\.image\.oc1\.[a-z0-9.-]+\.[a-z0-9]+$`
 	ImageID string `json:"imageId,omitempty"`
 
-	// subnetID is the OCID of the subnet where worker nodes will be provisioned.
+	// subnetId is the OCID of the subnet where worker nodes will be provisioned.
 	// A valid subnet OCID must satisfy the following rules:
 	//   format: Must be in the form `ocid1.subnet.oc1.<region>.<unique_ID>`
 	//   characters: Only lowercase letters (a-z), digits (0-9), and periods (.) are allowed
 	//
 	// +required
+	// +kubebuilder:validation:MaxLength=255
 	// +kubebuilder:validation:Pattern=`^ocid1\.subnet\.oc1\.[a-z0-9.-]+\.[a-z0-9]+$`
 	SubnetID string `json:"subnetId"`
 
@@ -73,5 +100,6 @@ type OCINodePoolPlatform struct {
 	// If not specified, nodes will not have SSH access.
 	//
 	// +optional
+	// +kubebuilder:validation:MaxLength=2048
 	SSHPublicKey string `json:"sshPublicKey,omitempty"`
 }

@@ -5363,6 +5363,26 @@ spec:
                         x-kubernetes-validations:
                         - message: CompartmentID is immutable
                           rule: self == oldSelf
+                      identityRef:
+                        description: |-
+                          identityRef is a reference to a secret holding OCI credentials
+                          to be used when reconciling the hosted cluster.
+                          The secret must contain two keys:
+                            - "config": OCI configuration file content (typically ~/.oci/config format)
+                            - "key": OCI API signing key (PEM-encoded private key)
+                        properties:
+                          name:
+                            description: |-
+                              name is the name of a secret in the same namespace as the HostedCluster.
+                              The secret must contain the following keys:
+                                - "config": OCI configuration file content
+                                - "key": OCI API signing key (PEM format)
+                            maxLength: 253
+                            minLength: 1
+                            type: string
+                        required:
+                        - name
+                        type: object
                       region:
                         description: |-
                           region is the OCI region in which the cluster resides.
@@ -5379,6 +5399,7 @@ spec:
                           rule: self == oldSelf
                     required:
                     - compartmentId
+                    - identityRef
                     - region
                     type: object
                   openstack:

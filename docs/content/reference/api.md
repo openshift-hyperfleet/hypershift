@@ -10457,6 +10457,38 @@ assigned when the service is created.</p>
 </tr>
 </tbody>
 </table>
+###OCIIdentityReference { #hypershift.openshift.io/v1beta1.OCIIdentityReference }
+<p>
+(<em>Appears on:</em>
+<a href="#hypershift.openshift.io/v1beta1.OCIPlatformSpec">OCIPlatformSpec</a>)
+</p>
+<p>
+<p>OCIIdentityReference is a reference to a secret containing OCI credentials.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>name</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>name is the name of a secret in the same namespace as the HostedCluster.
+The secret must contain the following keys:
+- &ldquo;config&rdquo;: OCI configuration file content
+- &ldquo;key&rdquo;: OCI API signing key (PEM format)</p>
+</td>
+</tr>
+</tbody>
+</table>
 ###OCINodePoolPlatform { #hypershift.openshift.io/v1beta1.OCINodePoolPlatform }
 <p>
 (<em>Appears on:</em>
@@ -10495,7 +10527,7 @@ string
 </td>
 <td>
 <em>(Optional)</em>
-<p>imageID is the OCID of the OS image to use for worker nodes.
+<p>imageId is the OCID of the OS image to use for worker nodes.
 If not specified, the image will be auto-discovered from the release payload.
 A valid image OCID must satisfy the following rules:
 format: Must be in the form <code>ocid1.image.oc1.&lt;region&gt;.&lt;unique_ID&gt;</code>
@@ -10510,7 +10542,7 @@ string
 </em>
 </td>
 <td>
-<p>subnetID is the OCID of the subnet where worker nodes will be provisioned.
+<p>subnetId is the OCID of the subnet where worker nodes will be provisioned.
 A valid subnet OCID must satisfy the following rules:
 format: Must be in the form <code>ocid1.subnet.oc1.&lt;region&gt;.&lt;unique_ID&gt;</code>
 characters: Only lowercase letters (a-z), digits (0-9), and periods (.) are allowed</p>
@@ -10562,13 +10594,30 @@ If not specified, nodes will not have SSH access.</p>
 <tbody>
 <tr>
 <td>
+<code>identityRef</code></br>
+<em>
+<a href="#hypershift.openshift.io/v1beta1.OCIIdentityReference">
+OCIIdentityReference
+</a>
+</em>
+</td>
+<td>
+<p>identityRef is a reference to a secret holding OCI credentials
+to be used when reconciling the hosted cluster.
+The secret must contain two keys:
+- &ldquo;config&rdquo;: OCI configuration file content (typically ~/.oci/config format)
+- &ldquo;key&rdquo;: OCI API signing key (PEM-encoded private key)</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>compartmentId</code></br>
 <em>
 string
 </em>
 </td>
 <td>
-<p>compartmentID is the OCI compartment OCID where the cluster resides.
+<p>compartmentId is the OCI compartment OCID where the cluster resides.
 A valid compartment OCID must satisfy the following rules:
 format: Must be in the form <code>ocid1.compartment.oc1..&lt;unique_ID&gt;</code>
 characters: Only lowercase letters (<code>a-z</code>), digits (<code>0-9</code>), and periods (<code>.</code>) are allowed
