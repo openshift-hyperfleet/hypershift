@@ -10443,6 +10443,199 @@ assigned when the service is created.</p>
 </tr>
 </tbody>
 </table>
+###OCIEndpointAccessType { #hypershift.openshift.io/v1beta1.OCIEndpointAccessType }
+<p>
+(<em>Appears on:</em>
+<a href="#hypershift.openshift.io/v1beta1.OCIPlatformSpec">OCIPlatformSpec</a>)
+</p>
+<p>
+<p>OCIEndpointAccessType defines the endpoint access type for OCI clusters.
+Determines how the hosted control plane API server is accessible.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;Private&#34;</p></td>
+<td><p>OCIEndpointAccessPrivate endpoint access allows only private API server access and private
+node communication with the control plane via Service Gateway and Network Load Balancer.</p>
+</td>
+</tr><tr><td><p>&#34;PublicAndPrivate&#34;</p></td>
+<td><p>OCIEndpointAccessPublicAndPrivate endpoint access allows public API server access and
+private node communication with the control plane via Service Gateway.</p>
+</td>
+</tr></tbody>
+</table>
+###OCINetworkConfig { #hypershift.openshift.io/v1beta1.OCINetworkConfig }
+<p>
+(<em>Appears on:</em>
+<a href="#hypershift.openshift.io/v1beta1.OCIPlatformSpec">OCIPlatformSpec</a>)
+</p>
+<p>
+<p>OCINetworkConfig specifies VCN configuration for OCI clusters and Service Gateway connectivity.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>vcn</code></br>
+<em>
+<a href="#hypershift.openshift.io/v1beta1.OCIResourceReference">
+OCIResourceReference
+</a>
+</em>
+</td>
+<td>
+<p>vcn is the Virtual Cloud Network (VCN) for the cluster.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>serviceGatewaySubnet</code></br>
+<em>
+<a href="#hypershift.openshift.io/v1beta1.OCIResourceReference">
+OCIResourceReference
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>serviceGatewaySubnet is the subnet in the management VCN for Service Gateway endpoints.
+This subnet is used for private connectivity between customer VCNs and the hosted control plane.</p>
+</td>
+</tr>
+</tbody>
+</table>
+###OCIPlatformSpec { #hypershift.openshift.io/v1beta1.OCIPlatformSpec }
+<p>
+(<em>Appears on:</em>
+<a href="#hypershift.openshift.io/v1beta1.PlatformSpec">PlatformSpec</a>)
+</p>
+<p>
+<p>OCIPlatformSpec specifies configuration for clusters running on Oracle Cloud Infrastructure.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>tenancy</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>tenancy is the OCI tenancy OCID.
+A tenancy is the root compartment that contains all cloud resources.
+The OCID must be in the format: ocid1.tenancy.oc1..<unique_id></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>compartment</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>compartment is the OCI compartment OCID where cluster resources will be created.
+A compartment is a logical container for organizing and isolating cloud resources.
+The OCID must be in the format: ocid1.compartment.oc1..<unique_id></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>region</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>region is the OCI region in which the cluster resides.
+A valid region must satisfy the following rules:
+format: Must be in the form <code>&lt;location&gt;-&lt;city&gt;-&lt;number&gt;</code>
+characters: Only lowercase letters (<code>a-z</code>), digits (<code>0-9</code>), and hyphens (<code>-</code>)
+valid examples: &ldquo;us-ashburn-1&rdquo;, &ldquo;uk-london-1&rdquo;, &ldquo;ap-tokyo-1&rdquo;
+For a full list of valid regions, see: <a href="https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm">https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>networkConfig</code></br>
+<em>
+<a href="#hypershift.openshift.io/v1beta1.OCINetworkConfig">
+OCINetworkConfig
+</a>
+</em>
+</td>
+<td>
+<p>networkConfig specifies VCN configuration for Service Gateway connectivity.
+Required for VPC configuration and private connectivity to the hosted control plane.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>endpointAccess</code></br>
+<em>
+<a href="#hypershift.openshift.io/v1beta1.OCIEndpointAccessType">
+OCIEndpointAccessType
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>endpointAccess controls API endpoint accessibility for the HostedControlPlane on OCI.
+Allowed values: &ldquo;Private&rdquo;, &ldquo;PublicAndPrivate&rdquo;. Defaults to &ldquo;Private&rdquo;.</p>
+</td>
+</tr>
+</tbody>
+</table>
+###OCIResourceReference { #hypershift.openshift.io/v1beta1.OCIResourceReference }
+<p>
+(<em>Appears on:</em>
+<a href="#hypershift.openshift.io/v1beta1.OCINetworkConfig">OCINetworkConfig</a>)
+</p>
+<p>
+<p>OCIResourceReference represents a reference to an OCI resource by OCID.
+OCIDs (Oracle Cloud IDs) are unique identifiers for OCI resources.
+See <a href="https://docs.oracle.com/en-us/iaas/Content/General/Concepts/identifiers.htm">https://docs.oracle.com/en-us/iaas/Content/General/Concepts/identifiers.htm</a> for OCID format.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>ocid</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>ocid is the Oracle Cloud Identifier (OCID) for the resource.
+OCIDs follow the format: ocid1.<resource_type>.<realm>.[region][.future_use].<unique_id></p>
+</td>
+</tr>
+</tbody>
+</table>
 ###OLMCatalogPlacement { #hypershift.openshift.io/v1beta1.OLMCatalogPlacement }
 <p>
 (<em>Appears on:</em>
@@ -11222,6 +11415,20 @@ GCPPlatformSpec
 <p>gcp specifies configuration for clusters running on Google Cloud Platform.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>oci</code></br>
+<em>
+<a href="#hypershift.openshift.io/v1beta1.OCIPlatformSpec">
+OCIPlatformSpec
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>oci specifies configuration for clusters running on Oracle Cloud Infrastructure.</p>
+</td>
+</tr>
 </tbody>
 </table>
 ###PlatformStatus { #hypershift.openshift.io/v1beta1.PlatformStatus }
@@ -11294,6 +11501,9 @@ AWSPlatformStatus
 </td>
 </tr><tr><td><p>&#34;None&#34;</p></td>
 <td><p>NonePlatform represents user supplied (e.g. bare metal) infrastructure.</p>
+</td>
+</tr><tr><td><p>&#34;OCI&#34;</p></td>
+<td><p>OCIPlatform represents Oracle Cloud Infrastructure.</p>
 </td>
 </tr><tr><td><p>&#34;OpenStack&#34;</p></td>
 <td><p>OpenStackPlatform represents OpenStack infrastructure.</p>
