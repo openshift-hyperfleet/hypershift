@@ -29,7 +29,14 @@ func ReconcileInfrastructure(infra *configv1.Infrastructure, hcp *hyperv1.Hosted
 	apiServerAddress := hcp.Status.ControlPlaneEndpoint.Host
 	apiServerPort := hcp.Status.ControlPlaneEndpoint.Port
 
-	infra.Spec.PlatformSpec.Type = configv1.PlatformType(platformType)
+	// OCI is not yet a recognized platform in the OpenShift Infrastructure CRD,
+	// so map it to External with platformName "OCI".
+	infraPlatformType := configv1.PlatformType(platformType)
+	if platformType == hyperv1.OCIPlatform {
+		infraPlatformType = configv1.ExternalPlatformType
+	}
+
+	infra.Spec.PlatformSpec.Type = infraPlatformType
 	infra.Status.APIServerInternalURL = fmt.Sprintf("https://%s:%d", apiServerAddress, apiServerPort)
 	if netutil.IsPrivateHCP(hcp) {
 		infra.Status.APIServerInternalURL = fmt.Sprintf("https://api.%s.hypershift.local:%d", hcp.Name, apiServerPort)
@@ -42,11 +49,11 @@ func ReconcileInfrastructure(infra *configv1.Infrastructure, hcp *hyperv1.Hosted
 	infra.Status.EtcdDiscoveryDomain = BaseDomain(hcp)
 	infra.Status.InfrastructureName = hcp.Spec.InfraID
 	infra.Status.ControlPlaneTopology = configv1.ExternalTopologyMode
-	infra.Status.Platform = configv1.PlatformType(platformType)
+	infra.Status.Platform = infraPlatformType
 	if infra.Status.PlatformStatus == nil {
 		infra.Status.PlatformStatus = &configv1.PlatformStatus{}
 	}
-	infra.Status.PlatformStatus.Type = configv1.PlatformType(platformType)
+	infra.Status.PlatformStatus.Type = infraPlatformType
 
 	switch hcp.Spec.InfrastructureAvailabilityPolicy {
 	case hyperv1.HighlyAvailable:
@@ -105,6 +112,10 @@ func ReconcileInfrastructure(infra *configv1.Infrastructure, hcp *hyperv1.Hosted
 			LoadBalancer:         &configv1.OpenStackPlatformLoadBalancer{Type: configv1.LoadBalancerTypeUserManaged},
 			APIServerInternalIPs: []string{},
 			IngressIPs:           []string{},
+		}
+	case hyperv1.OCIPlatform:
+		infra.Spec.PlatformSpec.External = &configv1.ExternalPlatformSpec{
+			PlatformName: "OCI",
 		}
 	case hyperv1.GCPPlatform:
 		if infra.Status.PlatformStatus.GCP == nil {
