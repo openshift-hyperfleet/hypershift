@@ -34,6 +34,13 @@ const (
 	// alpha: v0.1.49
 	// beta: x.y.z
 	HCPEtcdBackup featuregate.Feature = "HCPEtcdBackup"
+
+	// OCIPlatform enables experimental support for provisioning and managing OpenShift hosted control planes on Oracle Cloud Infrastructure.
+	// This feature gate controls OCI-specific cluster provisioning logic, resource management, and integration with OCI services for HyperShift-managed clusters.
+	// owner: @vkareh
+	// alpha: v0.1.50
+	// beta: x.y.z
+	OCIPlatform featuregate.Feature = "OCIPlatform"
 )
 
 // Initialize new features here
@@ -44,6 +51,7 @@ var (
 	openStackFeature               = featuregates.NewFeature(OpenStack, featuregates.WithEnableForFeatureSets(configv1.TechPreviewNoUpgrade))
 	gcpHCPFeature                  = featuregates.NewFeature(GCPPlatform, featuregates.WithEnableForFeatureSets(configv1.TechPreviewNoUpgrade))
 	hcpEtcdBackupFeature           = featuregates.NewFeature(HCPEtcdBackup, featuregates.WithEnableForFeatureSets(configv1.TechPreviewNoUpgrade))
+	ociPlatformFeature             = featuregates.NewFeature(OCIPlatform, featuregates.WithEnableForFeatureSets(configv1.TechPreviewNoUpgrade))
 )
 
 func init() {
@@ -52,6 +60,7 @@ func init() {
 	allFeatures.AddFeature(openStackFeature)
 	allFeatures.AddFeature(gcpHCPFeature)
 	allFeatures.AddFeature(hcpEtcdBackupFeature)
+	allFeatures.AddFeature(ociPlatformFeature)
 
 	// Default to configuring the Default featureset
 	ConfigureFeatureSet(string(configv1.Default))

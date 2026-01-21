@@ -101,6 +101,7 @@ func TestAllHypershiftOperatorFeatureGates(t *testing.T) {
 				"OpenStack":               false,
 				"GCPPlatform":             false,
 				"HCPEtcdBackup":           false,
+				"OCIPlatform":             false,
 			},
 		},
 		{
@@ -111,6 +112,7 @@ func TestAllHypershiftOperatorFeatureGates(t *testing.T) {
 				"OpenStack":               true,
 				"GCPPlatform":             true,
 				"HCPEtcdBackup":           true,
+				"OCIPlatform":             true,
 			},
 		},
 		{
@@ -121,6 +123,7 @@ func TestAllHypershiftOperatorFeatureGates(t *testing.T) {
 				"OpenStack":               false,
 				"GCPPlatform":             false,
 				"HCPEtcdBackup":           false,
+				"OCIPlatform":             false,
 			},
 		},
 	}
@@ -153,6 +156,12 @@ func TestAllHypershiftOperatorFeatureGates(t *testing.T) {
 			assert.Equal(t, tc.expected["HCPEtcdBackup"], actualHCPEtcdBackup,
 				"HCPEtcdBackup should be %v for feature set %s",
 				tc.expected["HCPEtcdBackup"], tc.featureSet)
+
+			// Test OCIPlatform
+			actualOCIPlatform := featuregate.Gate().Enabled(featuregate.OCIPlatform)
+			assert.Equal(t, tc.expected["OCIPlatform"], actualOCIPlatform,
+				"OCIPlatform should be %v for feature set %s",
+				tc.expected["OCIPlatform"], tc.featureSet)
 		})
 	}
 }
@@ -163,4 +172,5 @@ func TestFeatureGateConstants(t *testing.T) {
 	assert.Equal(t, "OpenStack", string(featuregate.OpenStack))
 	assert.Equal(t, "GCPPlatform", string(featuregate.GCPPlatform))
 	assert.Equal(t, "HCPEtcdBackup", string(featuregate.HCPEtcdBackup))
+	assert.Equal(t, "OCIPlatform", string(featuregate.OCIPlatform))
 }
