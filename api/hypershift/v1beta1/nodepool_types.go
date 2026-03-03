@@ -561,7 +561,7 @@ type NodePoolPlatform struct {
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf", message="Type is immutable"
 	// +immutable
 	// +openshift:validation:FeatureGateAwareEnum:featureGate="",enum=AWS;Azure;IBMCloud;KubeVirt;Agent;PowerVS;None
-	// +openshift:validation:FeatureGateAwareEnum:featureGate=OpenStack;GCPPlatform,enum=AWS;Azure;IBMCloud;KubeVirt;Agent;PowerVS;None;OpenStack;GCP
+	// +openshift:validation:FeatureGateAwareEnum:featureGate=OpenStack;GCPPlatform;OCIPlatform,enum=AWS;Azure;IBMCloud;KubeVirt;Agent;PowerVS;None;OpenStack;GCP;OCI
 	// +required
 	Type PlatformType `json:"type"`
 
@@ -604,6 +604,11 @@ type NodePoolPlatform struct {
 	// +optional
 	// +openshift:enable:FeatureGate=GCPPlatform
 	GCP *GCPNodePoolPlatform `json:"gcp,omitempty"`
+
+	// oci specifies the configuration used when operating on OCI.
+	// +optional
+	// +openshift:enable:FeatureGate=OCIPlatform
+	OCI *OCINodePoolPlatform `json:"oci,omitempty"`
 }
 
 // We define our own condition type since metav1.Condition has validation
