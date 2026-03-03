@@ -7,6 +7,7 @@ import (
 	"github.com/openshift/hypershift/cmd/nodepool/azure"
 	"github.com/openshift/hypershift/cmd/nodepool/core"
 	"github.com/openshift/hypershift/cmd/nodepool/kubevirt"
+	"github.com/openshift/hypershift/cmd/nodepool/oci"
 	"github.com/openshift/hypershift/cmd/nodepool/openstack"
 	"github.com/openshift/hypershift/cmd/nodepool/powervs"
 
@@ -18,6 +19,7 @@ var _ core.PlatformOptions = &aws.CompletedAWSPlatformCreateOptions{}
 var _ core.PlatformOptions = &kubevirt.CompletedKubevirtPlatformCreateOptions{}
 var _ core.PlatformOptions = &agent.AgentPlatformCreateOptions{}
 var _ core.PlatformOptions = &openstack.CompletedOpenStackPlatformCreateOptions{}
+var _ core.PlatformOptions = &oci.RawOCIPlatformCreateOptions{}
 
 func NewCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -56,6 +58,7 @@ func NewCreateCommand() *cobra.Command {
 	cmd.AddCommand(azure.NewCreateCommand(opts))
 	cmd.AddCommand(powervs.NewCreateCommand(opts))
 	cmd.AddCommand(openstack.NewCreateCommand(opts))
+	cmd.AddCommand(oci.NewCreateCommand(opts))
 
 	return cmd
 }
