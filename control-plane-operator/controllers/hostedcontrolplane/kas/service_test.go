@@ -102,6 +102,24 @@ func TestReconcileService(t *testing.T) {
 			err: nil,
 		},
 		{
+			name:          "When OCI platform with LoadBalancer strategy it should set NLB annotation",
+			platform:      hyperv1.OCIPlatform,
+			strategy:      hyperv1.ServicePublishingStrategy{Type: hyperv1.LoadBalancer},
+			apiServerPort: 6443,
+			svc_in:        corev1.Service{},
+			svc_out: corev1.Service{Spec: corev1.ServiceSpec{
+				Type: corev1.ServiceTypeLoadBalancer,
+				Ports: []corev1.ServicePort{
+					{
+						Protocol:   corev1.ProtocolTCP,
+						Port:       6443,
+						TargetPort: intstr.IntOrString{Type: intstr.String, StrVal: "client"},
+					},
+				},
+			}},
+			err: nil,
+		},
+		{
 			name:     "Invalid strategy",
 			strategy: hyperv1.ServicePublishingStrategy{Type: hyperv1.None},
 			err:      fmt.Errorf("invalid publishing strategy for Kube API server service: None"),

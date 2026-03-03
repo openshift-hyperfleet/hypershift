@@ -243,3 +243,45 @@ func TestReconcileRouterService_GCPInternalLoadBalancer(t *testing.T) {
 		t.Fatalf("expected service selector app to be 'private-router', got %q", svc.Spec.Selector["app"])
 	}
 }
+
+// When OCI platform is used it should configure Network Load Balancer annotations
+func TestReconcileRouterService_OCINetworkLoadBalancer(t *testing.T) {
+	t.Run("When internal it should set OCI NLB and internal annotations", func(t *testing.T) {
+		hcp := &hyperv1.HostedControlPlane{}
+		hcp.Spec.Platform.Type = hyperv1.OCIPlatform
+
+		svc := &corev1.Service{}
+
+		if err := ReconcileRouterService(svc, true /* internal */, false /* cross-zone */, hcp); err != nil {
+			t.Fatalf("ReconcileRouterService returned error: %v", err)
+		}
+
+		if got := svc.Annotations["oci.oraclecloud.com/load-balancer-type"]; got != "nlb" {
+			t.Fatalf("expected OCI NLB annotation to be 'nlb', got %q", got)
+		}
+		if got := svc.Annotations["oci-network-load-balancer.oraclecloud.com/internal"]; got != "true" {
+			t.Fatalf("expected OCI internal annotation to be 'true', got %q", got)
+		}
+		if svc.Spec.Type != corev1.ServiceTypeLoadBalancer {
+			t.Fatalf("expected service type to be LoadBalancer, got %v", svc.Spec.Type)
+		}
+	})
+
+	t.Run("When external it should set OCI NLB annotation without internal", func(t *testing.T) {
+		hcp := &hyperv1.HostedControlPlane{}
+		hcp.Spec.Platform.Type = hyperv1.OCIPlatform
+
+		svc := &corev1.Service{}
+
+		if err := ReconcileRouterService(svc, false /* internal */, false /* cross-zone */, hcp); err != nil {
+			t.Fatalf("ReconcileRouterService returned error: %v", err)
+		}
+
+		if got := svc.Annotations["oci.oraclecloud.com/load-balancer-type"]; got != "nlb" {
+			t.Fatalf("expected OCI NLB annotation to be 'nlb', got %q", got)
+		}
+		if _, exists := svc.Annotations["oci-network-load-balancer.oraclecloud.com/internal"]; exists {
+			t.Fatalf("expected OCI internal annotation to be absent for external service")
+		}
+	})
+}

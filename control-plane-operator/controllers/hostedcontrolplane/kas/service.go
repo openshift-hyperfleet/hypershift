@@ -76,6 +76,12 @@ func ReconcileService(svc *corev1.Service, strategy *hyperv1.ServicePublishingSt
 			if hcp.Spec.Platform.Type == hyperv1.AWSPlatform {
 				svc.Annotations[AWSNLBAnnotation] = "nlb"
 			}
+			if hcp.Spec.Platform.Type == hyperv1.OCIPlatform {
+				svc.Annotations["oci.oraclecloud.com/load-balancer-type"] = "nlb"
+				if isPrivate {
+					svc.Annotations["oci-network-load-balancer.oraclecloud.com/internal"] = "true"
+				}
+			}
 			if strategy.LoadBalancer != nil && strategy.LoadBalancer.Hostname != "" {
 				svc.Annotations[hyperv1.ExternalDNSHostnameAnnotation] = strategy.LoadBalancer.Hostname
 			}

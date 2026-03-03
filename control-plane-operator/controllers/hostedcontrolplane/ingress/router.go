@@ -67,6 +67,16 @@ func ReconcileRouterService(svc *corev1.Service, internal, crossZoneLoadBalancin
 		}
 	}
 
+	if hcp.Spec.Platform.Type == hyperv1.OCIPlatform {
+		if svc.Annotations == nil {
+			svc.Annotations = map[string]string{}
+		}
+		svc.Annotations["oci.oraclecloud.com/load-balancer-type"] = "nlb"
+		if internal {
+			svc.Annotations["oci-network-load-balancer.oraclecloud.com/internal"] = "true"
+		}
+	}
+
 	if svc.Labels == nil {
 		svc.Labels = map[string]string{}
 	}
