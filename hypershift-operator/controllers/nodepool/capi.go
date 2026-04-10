@@ -830,6 +830,8 @@ func (c *CAPI) machineTemplateBuilders(ctx context.Context) (client.Object, erro
 		template, err = c.openstackMachineTemplate(templateNameGenerator)
 	case hyperv1.GCPPlatform:
 		template, err = c.gcpMachineTemplate(ctx, templateNameGenerator)
+	case hyperv1.OCIPlatform:
+		template, err = c.ociMachineTemplate(templateNameGenerator)
 	default:
 		// TODO(alberto): Consider signal in a condition.
 		err = fmt.Errorf("unsupported platform type: %s", c.nodePool.Spec.Platform.Type)
