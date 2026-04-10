@@ -14,6 +14,7 @@ import (
 	capiibmv1 "sigs.k8s.io/cluster-api-provider-ibmcloud/api/v1beta2"
 	capikubevirt "sigs.k8s.io/cluster-api-provider-kubevirt/api/v1alpha1"
 	capiopenstackv1beta1 "sigs.k8s.io/cluster-api-provider-openstack/api/v1beta1"
+	capioci "github.com/oracle/cluster-api-provider-oci/api/v1beta2"
 	capiv1 "sigs.k8s.io/cluster-api/api/core/v1beta1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	secretsstorev1 "sigs.k8s.io/secrets-store-csi-driver/apis/v1"
@@ -69,6 +70,14 @@ var (
 	OpenStackNodePoolResources = []client.Object{
 		&capiopenstackv1beta1.OpenStackMachineTemplate{},
 	}
+
+	OCIResources = []client.Object{
+		&capioci.OCICluster{},
+	}
+
+	OCINodePoolResources = []client.Object{
+		&capioci.OCIMachineTemplate{},
+	}
 )
 
 func GetHostedClusterManagedResources(platformsInstalled string) []client.Object {
@@ -107,6 +116,8 @@ func GetHostedClusterManagedResources(platformsInstalled string) []client.Object
 			managedResources = append(managedResources, AgentResources...)
 		case strings.EqualFold(platform, string(hyperv1.OpenStackPlatform)):
 			managedResources = append(managedResources, OpenStackResources...)
+		case strings.EqualFold(platform, string(hyperv1.OCIPlatform)):
+			managedResources = append(managedResources, OCIResources...)
 		}
 	}
 
@@ -128,6 +139,8 @@ func GetNodePoolManagedResources(platformsInstalled string) []client.Object {
 			managedResources = append(managedResources, AgentNodePoolResources...)
 		case strings.EqualFold(platform, string(hyperv1.OpenStackPlatform)):
 			managedResources = append(managedResources, OpenStackNodePoolResources...)
+		case strings.EqualFold(platform, string(hyperv1.OCIPlatform)):
+			managedResources = append(managedResources, OCINodePoolResources...)
 		}
 	}
 
