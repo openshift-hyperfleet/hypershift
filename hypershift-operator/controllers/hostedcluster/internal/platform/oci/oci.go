@@ -2,9 +2,12 @@ package oci
 
 import (
 	"context"
+	"fmt"
 
 	hyperv1 "github.com/openshift/hypershift/api/hypershift/v1beta1"
 	"github.com/openshift/hypershift/support/upsert"
+
+	capioci "github.com/oracle/cluster-api-provider-oci/api/v1beta2"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -12,6 +15,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	capiv1 "sigs.k8s.io/cluster-api/api/core/v1beta1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -33,15 +37,34 @@ func New(capiProviderImage string) *OCI {
 }
 
 // ReconcileCAPIInfraCR reconciles the CAPI infrastructure cluster resource for OCI.
-// For the MVP, this returns nil because we don't yet have CAPOCI provider types imported.
-// This will be implemented in a future phase when we integrate the actual CAPI OCI provider.
 func (o OCI) ReconcileCAPIInfraCR(ctx context.Context, c client.Client, createOrUpdate upsert.CreateOrUpdateFN,
 	hcluster *hyperv1.HostedCluster, controlPlaneNamespace string, apiEndpoint hyperv1.APIEndpoint) (client.Object, error) {
 
-	// TODO(future): Implement OCICluster CR creation
-	// For now, return nil as we don't have CAPOCI types imported yet.
-	// This allows the HostedCluster to reconcile without errors.
-	return nil, nil
+	if hcluster.Spec.Platform.OCI == nil {
+		return nil, fmt.Errorf("OCI platform spec is required")
+	}
+
+	ociCluster := &capioci.OCICluster{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: controlPlaneNamespace,
+			Name:      hcluster.Name,
+		},
+	}
+
+	_, err := createOrUpdate(ctx, c, ociCluster, func() error {
+		ociCluster.Spec.CompartmentId = hcluster.Spec.Platform.OCI.CompartmentID
+		ociCluster.Spec.Region = hcluster.Spec.Platform.OCI.Region
+		ociCluster.Spec.ControlPlaneEndpoint = capiv1.APIEndpoint{
+			Host: apiEndpoint.Host,
+			Port: apiEndpoint.Port,
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return ociCluster, nil
 }
 
 // ReconcileCredentials ensures OCI credentials are synced to the control plane namespace.

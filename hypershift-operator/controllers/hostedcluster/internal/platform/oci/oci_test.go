@@ -7,6 +7,8 @@ import (
 	hyperv1 "github.com/openshift/hypershift/api/hypershift/v1beta1"
 	"github.com/openshift/hypershift/support/upsert"
 
+	capioci "github.com/oracle/cluster-api-provider-oci/api/v1beta2"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -117,17 +119,36 @@ func TestReconcileCAPIInfraCR(t *testing.T) {
 	scheme := runtime.NewScheme()
 	_ = corev1.AddToScheme(scheme)
 	_ = hyperv1.AddToScheme(scheme)
+	_ = capioci.AddToScheme(scheme)
 
 	fakeClient := fake.NewClientBuilder().WithScheme(scheme).Build()
 	createOrUpdate := upsert.New(false)
 
-	// ReconcileCAPIInfraCR should return nil for MVP (no CAPOCI integration)
-	infraCR, err := ociPlatform.ReconcileCAPIInfraCR(ctx, fakeClient, createOrUpdate.CreateOrUpdate, hc, "test-cp", hyperv1.APIEndpoint{})
+	apiEndpoint := hyperv1.APIEndpoint{
+		Host: "api.test.example.com",
+		Port: 6443,
+	}
+
+	infraCR, err := ociPlatform.ReconcileCAPIInfraCR(ctx, fakeClient, createOrUpdate.CreateOrUpdate, hc, "test-cp", apiEndpoint)
 	if err != nil {
 		t.Fatalf("ReconcileCAPIInfraCR should not error: %v", err)
 	}
-	if infraCR != nil {
-		t.Errorf("ReconcileCAPIInfraCR should return nil for MVP, got %v", infraCR)
+	if infraCR == nil {
+		t.Fatal("ReconcileCAPIInfraCR should return an OCICluster object")
+	}
+
+	ociCluster, ok := infraCR.(*capioci.OCICluster)
+	if !ok {
+		t.Fatalf("Expected *OCICluster, got %T", infraCR)
+	}
+	if ociCluster.Spec.CompartmentId != hc.Spec.Platform.OCI.CompartmentID {
+		t.Errorf("CompartmentId mismatch: got %s, want %s", ociCluster.Spec.CompartmentId, hc.Spec.Platform.OCI.CompartmentID)
+	}
+	if ociCluster.Spec.Region != hc.Spec.Platform.OCI.Region {
+		t.Errorf("Region mismatch: got %s, want %s", ociCluster.Spec.Region, hc.Spec.Platform.OCI.Region)
+	}
+	if ociCluster.Spec.ControlPlaneEndpoint.Host != apiEndpoint.Host {
+		t.Errorf("ControlPlaneEndpoint.Host mismatch: got %s, want %s", ociCluster.Spec.ControlPlaneEndpoint.Host, apiEndpoint.Host)
 	}
 }
 
