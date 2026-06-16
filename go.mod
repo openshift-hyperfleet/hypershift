@@ -73,6 +73,7 @@ require (
 	github.com/openshift/library-go v0.0.0-20251204132909-8814e976a023
 	github.com/openshift/multi-operator-manager v0.0.0-20260112172834-b64ebc8c627b
 	github.com/operator-framework/api v0.37.0
+	github.com/oracle/cluster-api-provider-oci v0.24.0
 	github.com/pkg/errors v0.9.1
 	github.com/ppc64le-cloud/powervs-utils v0.0.0-20250403153021-219b161805db
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.88.0
@@ -117,14 +118,14 @@ require (
 	k8s.io/utils v0.0.0-20260108192941-914a6e750570
 	kubevirt.io/api v1.8.2
 	kubevirt.io/containerized-data-importer-api v1.65.0
-	sigs.k8s.io/cluster-api v1.11.7
+	sigs.k8s.io/cluster-api v1.12.3
 	sigs.k8s.io/cluster-api-provider-aws/v2 v2.10.0
 	sigs.k8s.io/cluster-api-provider-azure v1.22.0
 	sigs.k8s.io/cluster-api-provider-gcp v1.11.0
 	sigs.k8s.io/cluster-api-provider-ibmcloud v0.12.0
 	sigs.k8s.io/cluster-api-provider-kubevirt v0.11.1
 	sigs.k8s.io/cluster-api-provider-openstack v0.13.3
-	sigs.k8s.io/controller-runtime v0.22.4
+	sigs.k8s.io/controller-runtime v0.22.5
 	sigs.k8s.io/karpenter v1.9.0
 	sigs.k8s.io/secrets-store-csi-driver v1.4.8
 	sigs.k8s.io/structured-merge-diff/v6 v6.3.2
@@ -214,6 +215,7 @@ require (
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/gobuffalo/flect v1.0.3 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
+	github.com/gofrs/flock v0.8.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
@@ -253,6 +255,7 @@ require (
 	github.com/opencontainers/selinux v1.13.0 // indirect
 	github.com/openshift-online/ocm-common v0.0.31 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/oracle/oci-go-sdk/v65 v65.81.1 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
@@ -265,6 +268,7 @@ require (
 	github.com/samber/lo v1.52.0 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.4 // indirect
+	github.com/sony/gobreaker v0.5.0 // indirect
 	github.com/stoewer/go-strcase v1.3.1 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xlab/treeprint v1.2.0 // indirect
