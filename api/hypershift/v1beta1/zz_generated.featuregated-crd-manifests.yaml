@@ -214,6 +214,7 @@ hostedclusters.hypershift.openshift.io:
   - HyperShiftOnlyDynamicResourceAllocation
   - ImageStreamImportMode
   - KMSEncryptionProvider
+  - OCIPlatform
   - OpenStack
   - TLSAdherence
   FilenameOperatorName: ""
@@ -287,6 +288,7 @@ hostedcontrolplanes.hypershift.openshift.io:
   - HyperShiftOnlyDynamicResourceAllocation
   - ImageStreamImportMode
   - KMSEncryptionProvider
+  - OCIPlatform
   - OpenStack
   - TLSAdherence
   FilenameOperatorName: ""

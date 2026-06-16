@@ -47,6 +47,9 @@
                         "name": "HCPEtcdBackup"
                     },
                     {
+                        "name": "OCIPlatform"
+                    },
+                    {
                         "name": "OSStreams"
                     }
                 ],
