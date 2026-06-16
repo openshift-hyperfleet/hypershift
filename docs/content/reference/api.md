@@ -13157,6 +13157,20 @@ GCPNodePoolPlatform
 <p>gcp specifies the configuration used when operating on GCP.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>oci</code></br>
+<em>
+<a href="#hypershift.openshift.io/v1beta1.OCINodePoolPlatform">
+OCINodePoolPlatform
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>oci specifies the configuration used when operating on OCI.</p>
+</td>
+</tr>
 </tbody>
 </table>
 ###NodePoolPlatformStatus { #hypershift.openshift.io/v1beta1.NodePoolPlatformStatus }
@@ -13706,6 +13720,157 @@ string
 The secret must contain the following keys:
 - &ldquo;config&rdquo;: OCI configuration file content
 - &ldquo;key&rdquo;: OCI API signing key (PEM format)</p>
+</td>
+</tr>
+</tbody>
+</table>
+###OCIInstanceShapeConfig { #hypershift.openshift.io/v1beta1.OCIInstanceShapeConfig }
+<p>
+(<em>Appears on:</em>
+<a href="#hypershift.openshift.io/v1beta1.OCINodePoolPlatform">OCINodePoolPlatform</a>)
+</p>
+<p>
+<p>OCIInstanceShapeConfig defines the configuration for a flexible OCI instance shape.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>ocpus</code></br>
+<em>
+int64
+</em>
+</td>
+<td>
+<p>ocpus is the number of OCPUs to allocate for the instance.
+An OCPU is equivalent to one physical CPU core (two vCPUs for most shapes).</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>memoryInGBs</code></br>
+<em>
+int64
+</em>
+</td>
+<td>
+<p>memoryInGBs is the amount of memory in GiB to allocate for the instance.
+The minimum and maximum values depend on the number of OCPUs.
+Generally, the ratio is 1 OCPU to 1-64 GiB of memory.</p>
+</td>
+</tr>
+</tbody>
+</table>
+###OCINodePoolPlatform { #hypershift.openshift.io/v1beta1.OCINodePoolPlatform }
+<p>
+(<em>Appears on:</em>
+<a href="#hypershift.openshift.io/v1beta1.NodePoolPlatform">NodePoolPlatform</a>)
+</p>
+<p>
+<p>OCINodePoolPlatform specifies the configuration of a NodePool when operating
+on the OCI platform.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>instanceShape</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>instanceShape is the OCI instance shape to use for node instances.
+An instance shape determines the number of CPUs, amount of memory,
+and other resources allocated to the instance.
+Valid examples: &ldquo;VM.Standard.E4.Flex&rdquo;, &ldquo;VM.Standard3.Flex&rdquo;, &ldquo;VM.Standard.A1.Flex&rdquo;
+For a full list of shapes, see: <a href="https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm">https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>instanceShapeConfig</code></br>
+<em>
+<a href="#hypershift.openshift.io/v1beta1.OCIInstanceShapeConfig">
+OCIInstanceShapeConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>instanceShapeConfig defines the configuration for a flexible instance shape.
+This is required when using a flexible shape (e.g., VM.Standard.E4.Flex).</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>availabilityDomain</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>availabilityDomain is the OCI availability domain in which to place node instances.
+Each OCI region has one or more availability domains.
+Format: &ldquo;<region>-AD-<number>&rdquo; (e.g., &ldquo;us-ashburn-1-AD-1&rdquo;)
+For more information, see: <a href="https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm">https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>subnetId</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>subnetID is the OCID of the subnet in which to place node instances.
+The subnet must be in the same VCN as the cluster&rsquo;s networking resources.
+A valid subnet OCID must be in the form &ldquo;ocid1.subnet.oc1.<region>.<unique_ID>&rdquo;
+where <region> is the OCI region identifier (e.g., &ldquo;us-sanjose-1&rdquo;).
+For more information, see: <a href="https://docs.oracle.com/en-us/iaas/Content/General/Concepts/identifiers.htm">https://docs.oracle.com/en-us/iaas/Content/General/Concepts/identifiers.htm</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>bootVolumeSize</code></br>
+<em>
+int64
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>bootVolumeSize is the size of the boot volume in GiB for node instances.
+If unspecified, the default boot volume size for the instance shape is used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>imageId</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>imageID is the OCID of the custom image to use for node instances.
+If unspecified, the default RHCOS image will be used based on the
+NodePool release payload.
+A valid image OCID must be in the form &ldquo;ocid1.image.oc1.<region>.<unique_ID>&rdquo;
+where <region> is the OCI region identifier (e.g., &ldquo;us-sanjose-1&rdquo;).
+For more information, see: <a href="https://docs.oracle.com/en-us/iaas/Content/General/Concepts/identifiers.htm">https://docs.oracle.com/en-us/iaas/Content/General/Concepts/identifiers.htm</a>.</p>
 </td>
 </tr>
 </tbody>
